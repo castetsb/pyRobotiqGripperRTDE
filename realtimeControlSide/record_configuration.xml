@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<rtde_config>
+	<recipe key="in">
+		<field name="input_int_register_24" type="INT32"/>
+	</recipe>
+	<recipe key="out">
+		<field name="timestamp" type="DOUBLE"/>
+	</recipe>
+</rtde_config>
