@@ -1,6 +1,4 @@
 import sys
-import os
-import time
 import pygame
 
 #sys.path.append("..")
@@ -56,7 +54,7 @@ while keep_running:
     try:
         con.receive()
         pygame.event.pump()
-        joy0 = js.get_axis(0)  # Right stick Y
+        joy0 = js.get_axis(3)  # Right stick Y
         pos = map_0_255(joy0)
         setp.input_int_register_24=pos
         con.send(setp)
