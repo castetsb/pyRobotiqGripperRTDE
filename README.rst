@@ -145,7 +145,7 @@ Gripper control logic:
 The robotiqRTDE script implement several control features.
 
 - Of the requested position is unchanged no motion command is sent to the gripper. Instead the status of the gripper is retrieved (object detection, finger position)
-- The gripper speed vary with the distance between the requested position and the current position. If the gripper is fare from the requested position it will move fast. If the gripper is close to the requested position it will go slow. This result in a fast and smooth motion.The gripper speed is calculated as follow:
+- The gripper speed vary with the distance between the requested position and the current position. If the gripper is fare from the requested position it will move fast. If the gripper is close to the requested position it will go slow. This result in a fast and smooth motion. The gripper speed is calculated as follow.
     - if abs(poseRequest - currentPosition) < minSpeedPosDelta : speed = 0
     - if minSpeedPosDelta <= abs(poseRequest - currentPosition) < maxSpeedPosDelta : speed = ((abs(poseRequest - currentPosition) - minSpeedPosDelta) / (maxSpeedPosDelta - minSpeedPosDelta))*255
     - if maxSpeedPosDelta <= abs(poseRequest - currentPosition) : speed = 255
