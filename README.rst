@@ -140,6 +140,31 @@ Communication flow:
             v
     Gripper at robot wrist
 
+Gripper control logic:
+======================
+The robotiqRTDE script implement several control features.
+
+- Of the requested position is unchanged no motion command is sent to the gripper. Instead the status of the gripper is retrieved (object detection, finger position)
+- The gripper speed vary with the distance between the requested position and the current position. If the gripper is fare from the requested position it will move fast. If the gripper is close to the requested position it will go slow. This result in a fast and smooth motion.The gripper speed is calculated as follow:
+    - if abs(poseRequest - currentPosition) < minSpeedPosDelta : speed = 0
+    - if minSpeedPosDelta <= abs(poseRequest - currentPosition) < maxSpeedPosDelta : speed = ((abs(poseRequest - currentPosition) - minSpeedPosDelta) / (maxSpeedPosDelta - minSpeedPosDelta))*255
+    - if maxSpeedPosDelta <= abs(poseRequest - currentPosition) : speed = 255
+
+.. note::
+
+    minSpeedPosDelta and maxSpeedPosDelta are arguments that can be passed to robotiqRTDE.py script at the time of its execution in the UR bash terminal.
+
+.. code-block:: bash
+
+    python3 robotiqRTDE.py --minSpeedPosDelta 5 --maxSpeedPosDelta 55
+
+- Only position at a distance of more than 2 bits from the curent position are processed. This avoid checky motion if the position request oscillate between 2 position (24, 24, 24, 25, 24,25,25,25,24,...)
+- If the gripper detect an object. It will try to secure the grip by closing full speed and full force repeatedly until the gripper position remain stable. This can be desactivated with the argument "--disableAutoLock".
+- If the gripper is requested to go out of a grip position, the gripper will move at full speed and full force to unloack the grip.
+- The gripper will continously try to close object (force>0). This can be desactivated with the argument "--disableContinuousGrip".
+- 0 and 255 position request are understood as request to close or open to grip on an object. The gripper will move full speed and full force to secure the grip.
+
+
 CAUTION
 ============
 
