@@ -57,6 +57,7 @@ if not con.send_start():
 #Gripper configuration
 gripper=Gripper(args.gripper_port,args.gripper_id)
 gripper.connect()
+gripper.activate_gripper()
 
 
 def updateList(data,value):
