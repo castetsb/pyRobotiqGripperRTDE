@@ -57,19 +57,7 @@ You will be prompted for the password. Which is: "easybot"
 
 Navigate to the "pyRobotiqGripperRTDE" folder.
 
-Excuse the following line to allow the execution of install.sh file:
-
-.. code-block:: bash
-
-    chmod +x install.sh
-
-Then run the install.sh file. It will install all dependencies.
-
-.. code-block:: bash
-
-    ./install.sh
-
-You can know run the python script which will start the RTDE register monitoring and control the gripper accordingly.
+Run the python script which will start the RTDE register monitoring and control the gripper accordingly.
 
 .. code-block:: bash
 
