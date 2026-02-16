@@ -11,11 +11,10 @@ The code have been tested on URSim with a 2F85 gripper.
 The package is composed of 2 folders:
 
 - urController: Software to deploy on UR controller which contains:
-    - python2 dependencies packaged in tar.gz files
-    - install.sh file to install dependencies
+    - python2 dependencies packaged
     - python2 script to monitor RTDE register and send appropriate commands to the gripper connected a thte wrist of the robot.
 - realtimeController: Software to deploy on the PC from which the realtime gripper control is done. It contains:
-    - urrtde package in tar.gz format
+    - urtde package in tar.gz format
     - Example of python code which detect the position of a joystick and write the corresponding gripper position in RTDE register.
 
 Installation
@@ -63,11 +62,11 @@ Run the python script which will start the RTDE register monitoring and control 
 
     python robotiqRTDE.py
 
-The gripper will first activate before moving to the requested position written in RTDE register "input_int_register_24".
+The gripper will first activate before moving to the requested position written in RTDE register (default: "input_int_register_24").
 
 .. warning::
 
-   Be aware that the register "input_int_register_24" maybe already used by a URCAP. Adjust the record_configuration.xml file and use the rtde_input_int_register option of the robotoiRTDE.py script to use a different RTDE register. 
+   The register "input_int_register_24" maybe already used by a URCAP. If necessary, use the rtde_input_int_register option of the robotoiRTDE.py script to use a different RTDE register. 
 
 Installation on realtime controller
 -----------------------------------
@@ -120,11 +119,11 @@ Communication flow:
     Realtime controller
             |RTDE write command (500Hz)
             v
-    Robot RTDE input_int_register_24
-            |RTDE read command (about 60Hz)
+    Robot RTDE input_int_register (default 24)
+            |RTDE read command (about 60~100Hz)
             v
     robotiqRTDE.py
-            |Modbus RTU command (about 60Hz)
+            |Modbus RTU command (about 0~60Hz)
             v
     Gripper at robot wrist
 
@@ -144,17 +143,63 @@ The robotiqRTDE script implement several control features.
 
 .. code-block:: bash
 
-    python3 robotiqRTDE.py --minSpeedPosDelta 5 --maxSpeedPosDelta 55
+    python robotiqRTDE.py --minSpeedPosDelta 5 --maxSpeedPosDelta 55
 
-- Only position at a distance of more than 2 bits from the curent position are processed. This avoid checky motion if the position request oscillate between 2 position (24, 24, 24, 25, 24,25,25,25,24,...)
+- Only requested position at a distance of more than "minimumMotion" from the curent position are processed. This avoid checky motion if the position request oscillate between veral bits position (24, 24, 24, 25, 24,25,25,25,24,...). minimumMotion can be set at an argument.
 - If the gripper detect an object. It will try to secure the grip by closing full speed and full force repeatedly until the gripper position remain stable. This can be desactivated with the argument "--disableAutoLock".
 - If the gripper is requested to go out of a grip position, the gripper will move at full speed and full force to unloack the grip.
 - The gripper will continously try to close object (force>0). This can be desactivated with the argument "--disableContinuousGrip".
 - 0 and 255 position request are understood as request to close or open to grip on an object. The gripper will move full speed and full force to secure the grip.
 
+You can get details about each argument of the robotiqRTDE.py script using the help fucntion.
+
+.. code-block:: bash
+
+    python robotiqRTDE.py --help
+
+    usage: robotiqRTDE.py [-h] [--gripper_id GRIPPER_ID]
+                      [--gripper_port GRIPPER_PORT]
+                      [--rtde_input_int_register RTDE_INPUT_INT_REGISTER]
+                      [--minSpeedPosDelta MINSPEEDPOSDELTA]
+                      [--maxSpeedPosDelta MAXSPEEDPOSDELTA]
+                      [--disableContinuousGrip] [--disableAutoLock]
+                      [--minimalMotion MINIMALMOTION]
+
+    optional arguments:
+    -h, --help            show this help message and exit
+    --gripper_id GRIPPER_ID
+                            Gripper device ID (default: 9)
+    --gripper_port GRIPPER_PORT
+                            TCP port or serial port of the gripper. 54321 for
+                            RS485 URCAP. 63352 for Robotiq URCAP. COM0 (Windows)
+                            or /dev/tty/USB0 (Linux) for serial.
+    --rtde_input_int_register RTDE_INPUT_INT_REGISTER
+                            Id of the rtde input int register where is saved the
+                            gripper position request.
+    --minSpeedPosDelta MINSPEEDPOSDELTA
+                            If the distance between current position and position
+                            request is less than this value the gripper will move
+                            at its minimum speed.
+    --maxSpeedPosDelta MAXSPEEDPOSDELTA
+                            If the distance between current position and position
+                            request is more than this value the gripper will move
+                            at its maximum speed.
+    --disableContinuousGrip
+                            By default the gripper continuously try to close on
+                            the object even after object detection. If disable the
+                            gripper stop at the position where the object has been
+                            detected.
+    --disableAutoLock     By default when the gripper detect an object it try to
+                            secure it with full force and speed. If disable the
+                            gripper will grip at low speed and force resulting is
+                            a weaker grip.
+    --minimalMotion MINIMALMOTION
+                            The gripper goes to the requested position only if the
+                            requested position is at a distance larger than
+                            minimalMotion
 
 CAUTION
 ============
 
-This application is a kind of prototype. It would need to be tested to make sure it is stable. Use at your own risks.
-I hope the code of this application will help you to make your own realtime application.
+This application is a prototype. Use at your own risks.
+Feel free to adjust it fit with your realtime application requirements.

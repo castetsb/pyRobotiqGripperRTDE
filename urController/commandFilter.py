@@ -219,11 +219,11 @@ def commandFilter(t0_RequestTime,
             if t0_RequestPosition <= commandHistory["position"][0]:
                 #The position is inside the grip
                 #Validate the grip
-                command["execution"]=NO_COMMAND
+                command["execution"]=READ_COMMAND
                 command["position"]=0
-                command["speed"]=255
-                command["force"]=255
-                command["grip"]=GRIP_VALIDATED
+                command["speed"]=0
+                command["force"]=0
+                command["grip"]=0
                 command["wait"]=0
             else:
                 #The position is ouside the grip
@@ -282,11 +282,11 @@ def commandFilter(t0_RequestTime,
             if t0_RequestPosition >= commandHistory["position"][0]:
                 #The position is inside the grip
                 #Validate the grip
-                command["execution"]=NO_COMMAND
-                command["position"]=255
-                command["speed"]=255
-                command["force"]=255
-                command["grip"]=GRIP_VALIDATED
+                command["execution"]=READ_COMMAND
+                command["position"]=0
+                command["speed"]=0
+                command["force"]=0
+                command["grip"]=0
                 command["wait"]=0
             else:
                 #The position is ouside the grip
@@ -324,7 +324,7 @@ def commandFilter(t0_RequestTime,
                     t0_Speed = int((float(posDelta - minSpeedPosDelta) /(maxSpeedPosDelta - minSpeedPosDelta)) * 255)
                 if (commandHistory["positionCommand"][0] == t0_RequestPosition) and (commandHistory["speedCommand"][0] == t0_Speed) and (commandHistory["forceCommand"][0] == t0_Force):
                     #t1_ command was identical as t0_ command. We do nothing.
-                    command["execution"]=NO_COMMAND
+                    command["execution"]=READ_COMMAND
                     command["position"]=None
                     command["speed"]=None
                     command["force"]=None

@@ -168,9 +168,9 @@ def run_robotiqRTDE():
             elif command["execution"]==READ_COMMAND:
                 statusUpdate=gripper.readStatus()
                 statusUpdate["time"]=now
-            else:             
-                pass
-            
+            else:
+                print "no execution command"
+                
             time.sleep(0.01)
 
     except KeyboardInterrupt:
