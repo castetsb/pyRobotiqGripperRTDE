@@ -137,6 +137,8 @@ The robotiqRTDE script implement several control features.
     - if minSpeedPosDelta <= abs(poseRequest - currentPosition) < maxSpeedPosDelta : speed = ((abs(poseRequest - currentPosition) - minSpeedPosDelta) / (maxSpeedPosDelta - minSpeedPosDelta))*255
     - if maxSpeedPosDelta <= abs(poseRequest - currentPosition) : speed = 255
 
+.. image:: attachments/speedVsDistance.JPG
+
 .. note::
 
     minSpeedPosDelta and maxSpeedPosDelta are arguments that can be passed to robotiqRTDE.py script at the time of its execution in the UR bash terminal.
@@ -145,7 +147,10 @@ The robotiqRTDE script implement several control features.
 
     python robotiqRTDE.py --minSpeedPosDelta 5 --maxSpeedPosDelta 55
 
-- Only requested position at a distance of more than "minimumMotion" from the curent position are processed. This avoid checky motion if the position request oscillate between veral bits position (24, 24, 24, 25, 24,25,25,25,24,...). minimumMotion can be set at an argument.
+- Only requested position at a distance of more than "minimumMotion" from the curent position are send to the gripper. This avoid checky motion if the position request oscillate between veral bits position (24, 24, 24, 25, 24,25,25,25,24,...). minimumMotion can be set at an argument.
+
+.. image:: attachments/minimumMotion.JPG
+
 - If the gripper detect an object. It will try to secure the grip by closing full speed and full force repeatedly until the gripper position remain stable. This can be desactivated with the argument "--disableAutoLock".
 - If the gripper is requested to go out of a grip position, the gripper will move at full speed and full force to unloack the grip.
 - The gripper will continously try to close object (force>0). This can be desactivated with the argument "--disableContinuousGrip".
