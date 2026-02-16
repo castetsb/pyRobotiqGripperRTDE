@@ -198,6 +198,13 @@ You can get details about each argument of the robotiqRTDE.py script using the h
                             requested position is at a distance larger than
                             minimalMotion
 
+Go further
+==========
+Ideally, this python script should be packaged in a URCAP.
+The URCAP should request control of the the tool IO and do appropriate serial settings.
+The URCAP should run the deamon.
+The RUCAP would be probrably very similar to the myDeamonSwing example URCAP of UR SDK: https://github.com/UniversalRobots/MyDaemonSwing
+
 CAUTION
 ============
 
