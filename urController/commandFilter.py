@@ -125,7 +125,8 @@ def commandFilter(t0_RequestTime,
                   minSpeedPosDelta=5,
                   maxSpeedPosDelta=55,
                   continuousGrip=True,
-                  autoLock=True):
+                  autoLock=True,
+                  minimalMotion=1):
     NO_OBJECT_DETECTED = 0
     
     OBJECT_DETECTED_WHILE_OPENING = 1
@@ -298,7 +299,7 @@ def commandFilter(t0_RequestTime,
                 command["wait"]=travelTime(t0_CalculatedPosition,t0_RequestPosition,255)
 
     else:
-        if abs(commandHistory["positionCommand"][0]-t0_RequestPosition)>1:
+        if abs(commandHistory["positionCommand"][0]-t0_RequestPosition)>minimalMotion:
             if t0_RequestPosition==0 or t0_RequestPosition==255:
                 command["execution"]=WRITE_READ_COMMAND
                 command["position"]=t0_RequestPosition

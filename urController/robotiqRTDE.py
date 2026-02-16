@@ -24,13 +24,35 @@ def monotonic_ms():
 parser = argparse.ArgumentParser()
 parser.add_argument('--gripper_id', type=int, default=9, help='Gripper device ID (default: 9)')
 parser.add_argument('--gripper_port', default='/dev/ttyTool', help='TCP port or serial port of the gripper. 54321 for RS485 URCAP. 63352 for Robotiq URCAP. COM0 (Windows) or /dev/tty/USB0 (Linux) for serial.')
-parser.add_argument('--rtde_input_int_register',default=24, help='Id of the rtde input int register where is saved the gripper position request.')
-parser.add_argument('--minSpeedPosDelta',default=5,help='If the distance between current position and position request is less than this value the gripper will move at its minimum speed. ')
-parser.add_argument('--maxSpeedPosDelta',default=55,help='If the distance between current position and position request is more than this value the gripper will move at its maximum speed. ')
+parser.add_argument('--rtde_input_int_register', type=int, default=24, help='Id of the rtde input int register where is saved the gripper position request.')
+parser.add_argument('--minSpeedPosDelta',type=int,default=10,help='If the distance between current position and position request is less than this value the gripper will move at its minimum speed. ')
+parser.add_argument('--maxSpeedPosDelta',type=int,default=100,help='If the distance between current position and position request is more than this value the gripper will move at its maximum speed. ')
 parser.add_argument('--disableContinuousGrip',action='store_true',dest='disableContinuousGrip',help='By default the gripper continuously try to close on the object even after object detection. If disable the gripper stop at the position where the object has been detected.')
 parser.add_argument('--disableAutoLock', action='store_true',dest='disableAutoLock',help='By default when the gripper detect an object it try to secure it with full force and speed. If disable the gripper will grip at low speed and force resulting is a weaker grip.')
+parser.add_argument('--minimalMotion',type=int,default=1,help='The gripper goes to the requested position only if the requested position is at a distance larger than minimalMotion')
+
 args = parser.parse_args()
 
+
+# Python 2 script
+
+register_number = args.rtde_input_int_register  # <-- your variable
+
+filename = "record_configuration.xml"
+
+with open(filename, "r") as f:
+    content = f.read()
+
+# Replace 24 with variable value
+content = content.replace(
+    "input_int_register_24",
+    "input_int_register_%d" % register_number
+)
+
+with open(filename, "w") as f:
+    f.write(content)
+
+print("Replacement done.")
 
 #RTDE configuration
 CONFIG_FILE="record_configuration.xml"
@@ -128,7 +150,8 @@ def run_robotiqRTDE():
                                   minSpeedPosDelta=args.minSpeedPosDelta,
                                   maxSpeedPosDelta=args.maxSpeedPosDelta,
                                   continuousGrip=not args.disableContinuousGrip,
-                                  autoLock=not args.disableAutoLock)
+                                  autoLock=not args.disableAutoLock,
+                                  minimalMotion=args.minimalMotion)
             if command["execution"]==WRITE_READ_COMMAND:
                 commandStatus=gripper.writePSFreadStatus(command["position"],command["speed"],command["force"])
                 if command["wait"]>0:
@@ -147,8 +170,8 @@ def run_robotiqRTDE():
                 statusUpdate["time"]=now
             else:             
                 pass
-
-            time.sleep(0.02)
+            
+            time.sleep(0.01)
 
     except KeyboardInterrupt:
         print "Stopping robotiq RTDE"
